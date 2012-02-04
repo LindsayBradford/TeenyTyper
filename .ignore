@@ -1,0 +1,7 @@
+# Compiled Java Code #
+######################
+bin
+# IDE Detail #
+##############
+.classpath
+.project
