@@ -37,7 +37,7 @@ import blacksmyth.general.swing.ColourIcon;
 public class TeenyTyperWindowFactory {
   private static final long serialVersionUID = 1L;
   
-  private static int ICON_PIXELS = 50;
+  private static int ICON_PIXELS = 55;
   
   private static enum EventComponent {
     TeenyTyperEditor,
