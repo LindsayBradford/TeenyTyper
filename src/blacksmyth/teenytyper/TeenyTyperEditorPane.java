@@ -1,6 +1,6 @@
 package blacksmyth.teenytyper;
 
-import java.awt.Color;
+// import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -14,7 +14,7 @@ public class TeenyTyperEditorPane extends JEditorPane {
 
   private static final long serialVersionUID = 1L;
   
-  private static final String ENTER = "enter";
+//  private static final String ENTER = "enter";
   private static final String CTRL_D = "<Control>-D";
   
   
@@ -28,11 +28,11 @@ public class TeenyTyperEditorPane extends JEditorPane {
         new Font("Serif", Font.BOLD, 42)
     );
 
-    this.bindKeyStrokeToAction(
-        ENTER, 
-        KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), 
-        new EnterAction(this)
-    );
+//    this.bindKeyStrokeToAction(
+//        ENTER, 
+//        KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), 
+//        new EnterAction(this)
+//    );
     
     this.bindKeyStrokeToAction(
         CTRL_D, 
@@ -46,24 +46,24 @@ public class TeenyTyperEditorPane extends JEditorPane {
     this.getActionMap().put(keyStrokeLabel, actionToPerform);
   }
   
-  private class EnterAction extends AbstractAction {
-    private static final long serialVersionUID = 1L;
-
-    private boolean colorToggle = false;
-
-    private TeenyTyperEditorPane pane;
-    
-    public EnterAction(TeenyTyperEditorPane pane) {
-      this.pane = pane;
-    }
-    
-    public void actionPerformed(ActionEvent arg0) {
-      colorToggle = !colorToggle;
-      pane.setForeground(colorToggle == true  ? Color.RED : Color.BLACK);
-      String text = pane.getText();
-      pane.setText(text + "\n");
-    }
-  }
+//  private class EnterAction extends AbstractAction {
+//    private static final long serialVersionUID = 1L;
+//
+//    private boolean colorToggle = false;
+//
+//    private TeenyTyperEditorPane pane;
+//    
+//    public EnterAction(TeenyTyperEditorPane pane) {
+//      this.pane = pane;
+//    }
+//    
+//    public void actionPerformed(ActionEvent arg0) {
+//      colorToggle = !colorToggle;
+//      pane.setForeground(colorToggle == true  ? Color.RED : Color.BLACK);
+//      String text = pane.getText();
+//      pane.setText(text + "\n");
+//    }
+//  }
   
   private class ExitAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
