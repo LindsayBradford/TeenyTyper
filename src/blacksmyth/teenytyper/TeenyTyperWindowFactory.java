@@ -4,7 +4,9 @@ import java.awt.Window;
 
 import java.awt.Insets;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JWindow;
 import javax.swing.RootPaneContainer;
@@ -38,13 +40,37 @@ public class TeenyTyperWindowFactory {
   }
   
   private static void createRootPaneContent(RootPaneContainer rootPaneContainer) {
+    JPanel mainPanel = new JPanel(new BorderLayout());
+
+    mainPanel.add(
+        createMenuButtonPanel(), 
+        BorderLayout.PAGE_START
+    );
+    
+    mainPanel.add(
+        createScrollableEditorPane(), 
+        BorderLayout.CENTER
+    );
+    
+    rootPaneContainer.getContentPane().add(
+        mainPanel, 
+        BorderLayout.CENTER
+    );
+  }
+  
+  private static JPanel createMenuButtonPanel() {
+    JPanel buttonPanel = new JPanel();
+    
+    buttonPanel.add(new JButton("test"));
+    
+    return buttonPanel;
+  }
+  
+  private static JScrollPane createScrollableEditorPane() {
     TeenyTyperEditorPane editor = new TeenyTyperEditorPane();
     editor.setMargin(new Insets(5,5,5,5));
     
-    rootPaneContainer.getContentPane().add(
-        new JScrollPane(editor), 
-        BorderLayout.CENTER
-    );
+    return new JScrollPane(editor);
   }
   
   private static void setWindowBounds(Window window) {
