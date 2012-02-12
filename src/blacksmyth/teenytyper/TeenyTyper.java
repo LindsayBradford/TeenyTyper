@@ -16,6 +16,6 @@ public class TeenyTyper extends TeenyTyperWindowFactory {
         );
     } catch (Exception e) {}
     
-    TeenyTyperWindowFactory.createFrame().setVisible(true);
+    TeenyTyperWindowFactory.createJFrame().setVisible(true);
   }
 }
