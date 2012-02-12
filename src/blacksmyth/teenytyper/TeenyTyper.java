@@ -1,3 +1,11 @@
+/**
+ * TeenyTyper by Lindsay Bradford is licensed under a 
+ * Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ *
+ * Year: 2012 
+ *
+ */
+
 package blacksmyth.teenytyper;
 
 import javax.swing.UIManager;
@@ -14,7 +22,9 @@ public class TeenyTyper extends TeenyTyperWindowFactory {
       UIManager.setLookAndFeel(
           "javax.swing.plaf.metal.MetalLookAndFeel"
         );
-    } catch (Exception e) {}
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     
     TeenyTyperWindowFactory.createJFrame().setVisible(true);
   }
