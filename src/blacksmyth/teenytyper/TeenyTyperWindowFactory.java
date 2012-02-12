@@ -30,11 +30,14 @@ import javax.swing.JToggleButton;
 import javax.swing.JWindow;
 import javax.swing.RootPaneContainer;
 import javax.swing.WindowConstants;
+import javax.swing.border.MatteBorder;
 
 import blacksmyth.general.swing.ColourIcon;
 
 public class TeenyTyperWindowFactory {
   private static final long serialVersionUID = 1L;
+  
+  private static int ICON_PIXELS = 40;
   
   private static enum EventComponent {
     TeenyTyperEditor,
@@ -42,7 +45,7 @@ public class TeenyTyperWindowFactory {
     RedButton,
     GreenButton,
     BlueButton,
-    SendButton
+    SendButton 
   }
   
   public static JFrame createJFrame() {
@@ -104,7 +107,7 @@ public class TeenyTyperWindowFactory {
         Box.createHorizontalStrut(HORIZONTAL_STRUT_WIDTH)
     );
     
-    createColourButtons(buttonPanel, eventComponents);
+    createTextColourButtons(buttonPanel, eventComponents);
     
     buttonPanel.add(
         Box.createHorizontalStrut(HORIZONTAL_STRUT_WIDTH)
@@ -116,8 +119,27 @@ public class TeenyTyperWindowFactory {
   }
   
   private static JButton createClearButton(Hashtable<EventComponent, JComponent> eventComponents) {
-     JButton clearButton = new JButton("clear");
-    
+     JButton clearButton = new JButton();
+
+     clearButton.setSize(ICON_PIXELS, ICON_PIXELS);
+     clearButton.setBorder(
+         new MatteBorder(5, 5, 5, 5, Color.LIGHT_GRAY)
+     );
+     
+     clearButton .setIcon(
+         new ColourIcon(
+             ICON_PIXELS, 
+             Color.WHITE
+         )
+     );
+
+     clearButton .setSelectedIcon(
+         new ColourIcon(
+             ICON_PIXELS, 
+             Color.LIGHT_GRAY
+         )
+     );
+
      eventComponents.put(
          EventComponent.ClearButton, 
          clearButton
@@ -126,7 +148,7 @@ public class TeenyTyperWindowFactory {
     return clearButton;
   }
 
-  private static void createColourButtons(JPanel buttonPanel, Hashtable<EventComponent, JComponent> eventComponents) {
+  private static void createTextColourButtons(JPanel buttonPanel, Hashtable<EventComponent, JComponent> eventComponents) {
     buttonPanel.add(
         createRedButton(eventComponents)
     );
@@ -153,7 +175,7 @@ public class TeenyTyperWindowFactory {
     colourButtons.add(
         (AbstractButton) eventComponents.get(EventComponent.BlueButton)
     );
-  }
+   }
   
   private static JToggleButton createRedButton(Hashtable<EventComponent, JComponent> eventComponents) {
     return createColourButton(
@@ -182,12 +204,15 @@ public class TeenyTyperWindowFactory {
   private static JToggleButton createColourButton(Color colour, EventComponent eventComponentID, Hashtable<EventComponent, JComponent> eventComponents) {
     JToggleButton theButton = new JToggleButton();
     
-    final int ICON_PIXELS = 15;
-
+    theButton.setSize(ICON_PIXELS, ICON_PIXELS);
+    theButton.setBorder(
+        new MatteBorder(5, 5, 5, 5, Color.LIGHT_GRAY)
+    );
+    
     theButton.setIcon(
         new ColourIcon(
             ICON_PIXELS, 
-            colour.darker()
+            colour.darker().darker()
         )
     );
 
@@ -232,7 +257,21 @@ public class TeenyTyperWindowFactory {
           }
         }
     );
+    
+    JToggleButton redButton = (JToggleButton) eventComponents.get(EventComponent.RedButton);
+    redButton.addActionListener(
+        new ColourActionListener(editor, Color.RED) 
+    );
 
+    JToggleButton greenButton = (JToggleButton) eventComponents.get(EventComponent.GreenButton);
+    greenButton.addActionListener(
+        new ColourActionListener(editor, Color.GREEN) 
+    );
+
+    JToggleButton blueButton = (JToggleButton) eventComponents.get(EventComponent.BlueButton);
+    blueButton.addActionListener(
+        new ColourActionListener(editor, Color.BLUE) 
+    );
   }
   
   private static void setWindowBounds(Window window) {
@@ -240,3 +279,17 @@ public class TeenyTyperWindowFactory {
   }
 }
 
+class ColourActionListener implements ActionListener {
+  private Color colour;
+  private TeenyTyperEditorPane editor;
+  
+  public ColourActionListener(TeenyTyperEditorPane editor, Color colour) {
+    this.editor = editor;
+    this.colour = colour;
+  }
+
+  public void actionPerformed(ActionEvent arg0) {
+    editor.setTextColour(colour);
+    editor.requestFocus();
+  }
+}
