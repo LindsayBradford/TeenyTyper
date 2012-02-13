@@ -1,6 +1,6 @@
 # Compiled Java Code #
 ######################
-bin
+/bin/**
 # IDE Detail #
 ##############
 .classpath

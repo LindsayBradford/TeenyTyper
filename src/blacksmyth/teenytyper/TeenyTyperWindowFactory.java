@@ -97,7 +97,7 @@ public class TeenyTyperWindowFactory {
   private static JPanel createMenuButtonPanel(Hashtable<EventComponent, JComponent> eventComponents) {
     JPanel buttonPanel = new JPanel();
     
-    final int HORIZONTAL_STRUT_WIDTH = 20;
+    final int HORIZONTAL_STRUT_WIDTH = 34;
     
     buttonPanel.add(
         createClearButton(eventComponents)
