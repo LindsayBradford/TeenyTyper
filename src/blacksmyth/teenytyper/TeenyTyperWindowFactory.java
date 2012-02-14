@@ -11,35 +11,47 @@ package blacksmyth.teenytyper;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Window;
 
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Hashtable;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JWindow;
+import javax.swing.KeyStroke;
 import javax.swing.RootPaneContainer;
 import javax.swing.WindowConstants;
 import javax.swing.border.MatteBorder;
 
+import blacksmyth.general.swing.ActionBinder;
 import blacksmyth.general.swing.ColourIcon;
 
 public class TeenyTyperWindowFactory {
   private static final long serialVersionUID = 1L;
   
+  private static Font EDITOR_FONT = new Font("Serif", Font.BOLD, 42);
+  
   private static int ICON_PIXELS = 55;
   
+  private static Color TEXT_COLOURS[] = {Color.RED, Color.GREEN, Color.BLUE};
+  
+  private static Color DEFAULT_TEXT_COLOUR = TEXT_COLOURS[0]; 
+  
   private static enum EventComponent {
+    InvalidComponent,
     TeenyTyperEditor,
     ClearButton,
     RedButton,
@@ -74,7 +86,12 @@ public class TeenyTyperWindowFactory {
   private static void createRootPaneContent(RootPaneContainer container) {
     Hashtable<EventComponent, JComponent> eventComponents = new Hashtable<EventComponent, JComponent>();
 
-    JPanel mainPanel = new JPanel(new BorderLayout());
+    JPanel mainPanel = new JPanel(new BorderLayout(5,5));
+
+    mainPanel.add(
+        Box.createHorizontalStrut(5),
+        BorderLayout.EAST
+    );
 
     mainPanel.add(
         createScrollableEditorPane(eventComponents), 
@@ -82,10 +99,20 @@ public class TeenyTyperWindowFactory {
     );
     
     mainPanel.add(
+        Box.createHorizontalStrut(5),
+        BorderLayout.WEST
+    );
+    
+    mainPanel.add(
         createMenuButtonPanel(eventComponents), 
         BorderLayout.PAGE_START
     );
     
+    mainPanel.add(
+        Box.createVerticalStrut(5),
+        BorderLayout.PAGE_END
+    );
+   
     container.getContentPane().add(
         mainPanel, 
         BorderLayout.CENTER
@@ -93,11 +120,22 @@ public class TeenyTyperWindowFactory {
     
     createEventHandlers(eventComponents);
   }
-
+  
   private static JPanel createMenuButtonPanel(Hashtable<EventComponent, JComponent> eventComponents) {
     JPanel buttonPanel = new JPanel();
     
     final int HORIZONTAL_STRUT_WIDTH = 34;
+    
+    final JLabel editorLabel = new JLabel("TeenyTyper");
+    editorLabel.setFont(EDITOR_FONT);
+    
+    buttonPanel.add(
+        editorLabel
+    );
+
+    buttonPanel.add(
+        Box.createHorizontalStrut(HORIZONTAL_STRUT_WIDTH)
+    );
     
     buttonPanel.add(
         createClearButton(eventComponents)
@@ -109,22 +147,21 @@ public class TeenyTyperWindowFactory {
     
     createTextColourButtons(buttonPanel, eventComponents);
     
-    buttonPanel.add(
-        Box.createHorizontalStrut(HORIZONTAL_STRUT_WIDTH)
-    );
-    
-    buttonPanel.add(new JButton("send"));
-    
     return buttonPanel;
+  }
+
+  private static void setColourButtonSizeAndBorder(AbstractButton theButton) {
+    theButton.setRequestFocusEnabled(false);
+    theButton.setSize(ICON_PIXELS, ICON_PIXELS);
+    theButton.setBorder(
+        new MatteBorder(5, 5, 5, 5, Color.LIGHT_GRAY)
+    );
   }
   
   private static JButton createClearButton(Hashtable<EventComponent, JComponent> eventComponents) {
      JButton clearButton = new JButton();
 
-     clearButton.setSize(ICON_PIXELS, ICON_PIXELS);
-     clearButton.setBorder(
-         new MatteBorder(5, 5, 5, 5, Color.LIGHT_GRAY)
-     );
+     setColourButtonSizeAndBorder(clearButton);
      
      clearButton .setIcon(
          new ColourIcon(
@@ -147,67 +184,56 @@ public class TeenyTyperWindowFactory {
      
     return clearButton;
   }
-
-  private static void createTextColourButtons(JPanel buttonPanel, Hashtable<EventComponent, JComponent> eventComponents) {
-    buttonPanel.add(
-        createRedButton(eventComponents)
-    );
-
-    buttonPanel.add(
-        createGreenButton(eventComponents)
-    );
-
-    buttonPanel.add(
-        createBlueButton(eventComponents)
-    );
+  
+  private static EventComponent getEventComponentFor(Color colour) throws IllegalArgumentException {
+    if (colour == Color.RED) return EventComponent.RedButton;
+    if (colour == Color.GREEN) return EventComponent.GreenButton;
+    if (colour == Color.BLUE) return EventComponent.BlueButton;
     
-    // Ensure only one colour button is toggled active at any one time.
+    // Break the running of the editor until we supply an EventComponent mapping to the colour.
     
-    ButtonGroup colourButtons = new ButtonGroup();
-    colourButtons.add(
-        (AbstractButton) eventComponents.get(EventComponent.RedButton)
-    );
-
-    colourButtons.add(
-        (AbstractButton) eventComponents.get(EventComponent.GreenButton)
-    );
-
-    colourButtons.add(
-        (AbstractButton) eventComponents.get(EventComponent.BlueButton)
-    );
-   }
-  
-  private static JToggleButton createRedButton(Hashtable<EventComponent, JComponent> eventComponents) {
-    return createColourButton(
-        Color.RED, 
-        EventComponent.RedButton, 
-        eventComponents
-    );  
+    throw new IllegalArgumentException("No EventComponent mapping for colour specified: " + colour.toString());
   }
 
-  private static JToggleButton createGreenButton(Hashtable<EventComponent, JComponent> eventComponents) {
-    return createColourButton(
-        Color.GREEN, 
-        EventComponent.GreenButton, 
-        eventComponents
-    );  
+  private static void createTextColourButtons(
+                          JPanel buttonPanel, 
+                          Hashtable<EventComponent, JComponent> eventComponents) {
+
+    ButtonGroup colourButtonGroup = new ButtonGroup();
+    
+    for (Color textColour : TEXT_COLOURS) {
+      
+      JToggleButton colourButton = createColourButton(
+          textColour, 
+          getEventComponentFor(textColour), 
+          eventComponents
+      );  
+      
+      buttonPanel.add(colourButton);
+
+      // Ensure only one colour button is toggled active at any one time by
+      // adding the button to colourButtonGroup.
+
+      colourButtonGroup.add(colourButton);
+      
+      if (textColour == DEFAULT_TEXT_COLOUR) {
+        colourButtonGroup.setSelected(
+            colourButton.getModel(), 
+            true
+        );
+      }
+      
+    }
   }
-  
-  private static JToggleButton createBlueButton(Hashtable<EventComponent, JComponent> eventComponents) {
-    return createColourButton(
-        Color.BLUE, 
-        EventComponent.BlueButton, 
-        eventComponents
-    );  
-  }
-  
-  private static JToggleButton createColourButton(Color colour, EventComponent eventComponentID, Hashtable<EventComponent, JComponent> eventComponents) {
+ 
+  private static JToggleButton createColourButton(
+                                  Color colour, 
+                                  EventComponent eventComponentID, 
+                                  Hashtable<EventComponent, JComponent> eventComponents) {
+    
     JToggleButton theButton = new JToggleButton();
-    
-    theButton.setSize(ICON_PIXELS, ICON_PIXELS);
-    theButton.setBorder(
-        new MatteBorder(5, 5, 5, 5, Color.LIGHT_GRAY)
-    );
+
+    setColourButtonSizeAndBorder(theButton);
     
     theButton.setIcon(
         new ColourIcon(
@@ -232,8 +258,7 @@ public class TeenyTyperWindowFactory {
   }
   
   private static JScrollPane createScrollableEditorPane(Hashtable<EventComponent, JComponent> eventComponents) {
-    TeenyTyperEditorPane editor = new TeenyTyperEditorPane();
-    editor.setMargin(new Insets(5,5,5,5));
+    TeenyTyperEditorPane editor = new TeenyTyperEditorPane(EDITOR_FONT, TEXT_COLOURS, DEFAULT_TEXT_COLOUR);
 
     eventComponents.put(
         EventComponent.TeenyTyperEditor, 
@@ -244,8 +269,20 @@ public class TeenyTyperWindowFactory {
   }
 
   private static void createEventHandlers(Hashtable<EventComponent, JComponent> eventComponents) {
-    
+
     final TeenyTyperEditorPane editor = (TeenyTyperEditorPane) eventComponents.get(EventComponent.TeenyTyperEditor);
+    
+    ActionBinder.bindKeyStrokeToAction(
+        editor, 
+        KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK), // <CTRL-D>
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
+
+          public void actionPerformed(ActionEvent arg0) {
+            System.exit(0);
+          }
+        }
+    );
     
     JButton clearButton = (JButton) eventComponents.get(EventComponent.ClearButton);
 
@@ -253,25 +290,22 @@ public class TeenyTyperWindowFactory {
         new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
             editor.setText("");
-            editor.requestFocus();
+            editor.requestFocusInWindow();
           }
         }
     );
     
-    JToggleButton redButton = (JToggleButton) eventComponents.get(EventComponent.RedButton);
-    redButton.addActionListener(
-        new ColourActionListener(editor, Color.RED) 
-    );
+    for (Color textColour : TEXT_COLOURS) {
+      
+      JToggleButton colourButton = (JToggleButton) eventComponents.get(
+          getEventComponentFor(textColour)
+      );
+      
+      colourButton.addActionListener(
+          new ColourActionListener(editor, textColour) 
+      );
 
-    JToggleButton greenButton = (JToggleButton) eventComponents.get(EventComponent.GreenButton);
-    greenButton.addActionListener(
-        new ColourActionListener(editor, Color.GREEN) 
-    );
-
-    JToggleButton blueButton = (JToggleButton) eventComponents.get(EventComponent.BlueButton);
-    blueButton.addActionListener(
-        new ColourActionListener(editor, Color.BLUE) 
-    );
+    }
   }
   
   private static void setWindowBounds(Window window) {
@@ -290,6 +324,6 @@ class ColourActionListener implements ActionListener {
 
   public void actionPerformed(ActionEvent arg0) {
     editor.setTextColour(colour);
-    editor.requestFocus();
+    editor.requestFocusInWindow();
   }
 }
