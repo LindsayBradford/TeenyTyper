@@ -15,6 +15,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.Window;
 
 import java.awt.event.ActionEvent;
@@ -32,9 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
-import javax.swing.JWindow;
 import javax.swing.KeyStroke;
-import javax.swing.RootPaneContainer;
 import javax.swing.WindowConstants;
 import javax.swing.border.MatteBorder;
 
@@ -57,35 +56,25 @@ public class TeenyTyperWindowFactory {
     
     InteractiveComponents components = new InteractiveComponents(new JFrame());
     
-    JFrame frame = (JFrame) components.window;
+    components.window.setUndecorated(true);
     
-    frame.setDefaultCloseOperation(
+    components.window.setDefaultCloseOperation(
         WindowConstants.DO_NOTHING_ON_CLOSE
     );
     
     createRootPaneContent(components);
-    setWindowBounds(frame);
-
-    frame.setFocusTraversalPolicy(
-        new EditorFocusTraversalPolicy(components.editor)    
-      );
-
-    return frame;
-  }
-
-  @Deprecated
-  public static JWindow createJWindow() {
-    InteractiveComponents components = new InteractiveComponents(new JWindow());
-    JWindow newWindow = (JWindow) components.window;
     
-    createRootPaneContent(components);
-    setWindowBounds(newWindow);
-    
-    newWindow.setFocusTraversalPolicy(
-      new EditorFocusTraversalPolicy(components.editor)    
+    components.window.setBounds(
+        0, 0,    // x,y coords
+        Toolkit.getDefaultToolkit().getScreenSize().width, 
+        Toolkit.getDefaultToolkit().getScreenSize().height
     );
 
-    return newWindow;
+    components.window.setFocusTraversalPolicy(
+        new EditorFocusTraversalPolicy(components.editor)    
+    );
+
+    return components.window;
   }
   
   private static void createRootPaneContent(InteractiveComponents components) {
@@ -285,9 +274,6 @@ public class TeenyTyperWindowFactory {
     }
   }
   
-  private static void setWindowBounds(Window window) {
-    window.setBounds(20, 20, 1024, 768);
-  }
 }
 
 class ColourActionListener implements ActionListener {
@@ -306,12 +292,12 @@ class ColourActionListener implements ActionListener {
 }
 
 class InteractiveComponents {
-  public RootPaneContainer window;
+  public JFrame window;
   public TeenyTyperEditorPane editor;
   public JButton clearButton;
   public Hashtable<Color, JToggleButton> colorButtons;
   
-  public InteractiveComponents(RootPaneContainer window) {
+  public InteractiveComponents(JFrame window) {
     this.colorButtons = new Hashtable<Color, JToggleButton>();
     this.window = window;
   }
