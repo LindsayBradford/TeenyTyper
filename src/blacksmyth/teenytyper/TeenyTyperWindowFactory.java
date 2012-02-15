@@ -24,7 +24,6 @@ import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,41 +49,34 @@ public class TeenyTyperWindowFactory {
   
   private static Color DEFAULT_TEXT_COLOUR = TEXT_COLOURS[0]; 
   
-  private static enum EventComponent {
-    InvalidComponent,
-    TeenyTyperEditor,
-    ClearButton,
-    RedButton,
-    GreenButton,
-    BlueButton,
-    SendButton 
-  }
-  
   public static JFrame createJFrame() {
-    JFrame newFrame = new JFrame();
     
-    newFrame.setDefaultCloseOperation(
+    InteractiveComponents components = new InteractiveComponents(new JFrame());
+    
+    JFrame frame = (JFrame) components.window;
+    
+    frame.setDefaultCloseOperation(
         WindowConstants.DO_NOTHING_ON_CLOSE
     );
     
-    createRootPaneContent(newFrame);
-    setWindowBounds(newFrame);
+    createRootPaneContent(components);
+    setWindowBounds(frame);
 
-    return newFrame;
+    return frame;
   }
 
   @Deprecated
   public static JWindow createJWindow() {
-    JWindow newWindow = new JWindow();
+    InteractiveComponents components = new InteractiveComponents(new JWindow());
+    JWindow newWindow = (JWindow) components.window;
     
-    createRootPaneContent(newWindow);
+    createRootPaneContent(components);
     setWindowBounds(newWindow);
 
     return newWindow;
   }
   
-  private static void createRootPaneContent(RootPaneContainer container) {
-    Hashtable<EventComponent, JComponent> eventComponents = new Hashtable<EventComponent, JComponent>();
+  private static void createRootPaneContent(InteractiveComponents components) {
 
     JPanel mainPanel = new JPanel(new BorderLayout(5,5));
 
@@ -94,7 +86,7 @@ public class TeenyTyperWindowFactory {
     );
 
     mainPanel.add(
-        createScrollableEditorPane(eventComponents), 
+        createScrollableEditorPane(components), 
         BorderLayout.CENTER
     );
     
@@ -104,7 +96,7 @@ public class TeenyTyperWindowFactory {
     );
     
     mainPanel.add(
-        createMenuButtonPanel(eventComponents), 
+        createMenuButtonPanel(components), 
         BorderLayout.PAGE_START
     );
     
@@ -113,15 +105,15 @@ public class TeenyTyperWindowFactory {
         BorderLayout.PAGE_END
     );
    
-    container.getContentPane().add(
+    components.window.getContentPane().add(
         mainPanel, 
         BorderLayout.CENTER
     );
     
-    createEventHandlers(eventComponents);
+    createEventHandlers(components);
   }
   
-  private static JPanel createMenuButtonPanel(Hashtable<EventComponent, JComponent> eventComponents) {
+  private static JPanel createMenuButtonPanel(InteractiveComponents components) {
     JPanel buttonPanel = new JPanel();
     
     final int HORIZONTAL_STRUT_WIDTH = 34;
@@ -138,14 +130,14 @@ public class TeenyTyperWindowFactory {
     );
     
     buttonPanel.add(
-        createClearButton(eventComponents)
+        createClearButton(components)
     );
     
     buttonPanel.add(
         Box.createHorizontalStrut(HORIZONTAL_STRUT_WIDTH)
     );
     
-    createTextColourButtons(buttonPanel, eventComponents);
+    createTextColourButtons(buttonPanel, components);
     
     return buttonPanel;
   }
@@ -158,7 +150,7 @@ public class TeenyTyperWindowFactory {
     );
   }
   
-  private static JButton createClearButton(Hashtable<EventComponent, JComponent> eventComponents) {
+  private static JButton createClearButton(InteractiveComponents components) {
      JButton clearButton = new JButton();
 
      setColourButtonSizeAndBorder(clearButton);
@@ -177,27 +169,14 @@ public class TeenyTyperWindowFactory {
          )
      );
 
-     eventComponents.put(
-         EventComponent.ClearButton, 
-         clearButton
-     );
+     components.clearButton = clearButton;
      
     return clearButton;
   }
   
-  private static EventComponent getEventComponentFor(Color colour) throws IllegalArgumentException {
-    if (colour == Color.RED) return EventComponent.RedButton;
-    if (colour == Color.GREEN) return EventComponent.GreenButton;
-    if (colour == Color.BLUE) return EventComponent.BlueButton;
-    
-    // Break the running of the editor until we supply an EventComponent mapping to the colour.
-    
-    throw new IllegalArgumentException("No EventComponent mapping for colour specified: " + colour.toString());
-  }
-
   private static void createTextColourButtons(
                           JPanel buttonPanel, 
-                          Hashtable<EventComponent, JComponent> eventComponents) {
+                          InteractiveComponents components) {
 
     ButtonGroup colourButtonGroup = new ButtonGroup();
     
@@ -205,8 +184,7 @@ public class TeenyTyperWindowFactory {
       
       JToggleButton colourButton = createColourButton(
           textColour, 
-          getEventComponentFor(textColour), 
-          eventComponents
+          components
       );  
       
       buttonPanel.add(colourButton);
@@ -228,8 +206,7 @@ public class TeenyTyperWindowFactory {
  
   private static JToggleButton createColourButton(
                                   Color colour, 
-                                  EventComponent eventComponentID, 
-                                  Hashtable<EventComponent, JComponent> eventComponents) {
+                                  InteractiveComponents components) {
     
     JToggleButton theButton = new JToggleButton();
 
@@ -249,31 +226,23 @@ public class TeenyTyperWindowFactory {
         )
     );
     
-    eventComponents.put(
-        eventComponentID, 
-        theButton
-    );
-    
-   return theButton;
+    components.colorButtons.put(colour, theButton);
+
+    return theButton;
   }
   
-  private static JScrollPane createScrollableEditorPane(Hashtable<EventComponent, JComponent> eventComponents) {
+  private static JScrollPane createScrollableEditorPane(InteractiveComponents components) {
     TeenyTyperEditorPane editor = new TeenyTyperEditorPane(EDITOR_FONT, TEXT_COLOURS, DEFAULT_TEXT_COLOUR);
 
-    eventComponents.put(
-        EventComponent.TeenyTyperEditor, 
-        editor
-    );
+    components.editor = editor;
     
     return new JScrollPane(editor);
   }
 
-  private static void createEventHandlers(Hashtable<EventComponent, JComponent> eventComponents) {
+  private static void createEventHandlers(final InteractiveComponents components) {
 
-    final TeenyTyperEditorPane editor = (TeenyTyperEditorPane) eventComponents.get(EventComponent.TeenyTyperEditor);
-    
     ActionBinder.bindKeyStrokeToAction(
-        editor, 
+        components.editor, 
         KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK), // <CTRL-D>
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
@@ -284,25 +253,21 @@ public class TeenyTyperWindowFactory {
         }
     );
     
-    JButton clearButton = (JButton) eventComponents.get(EventComponent.ClearButton);
-
-    clearButton.addActionListener(
+    components.clearButton.addActionListener(
         new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
-            editor.setText("");
-            editor.requestFocusInWindow();
+            components.editor.setText("");
+            components.editor.requestFocusInWindow();
           }
         }
     );
     
     for (Color textColour : TEXT_COLOURS) {
       
-      JToggleButton colourButton = (JToggleButton) eventComponents.get(
-          getEventComponentFor(textColour)
-      );
+      JToggleButton colourButton = components.colorButtons.get(textColour);
       
       colourButton.addActionListener(
-          new ColourActionListener(editor, textColour) 
+          new ColourActionListener(components.editor, textColour) 
       );
 
     }
@@ -327,3 +292,16 @@ class ColourActionListener implements ActionListener {
     editor.requestFocusInWindow();
   }
 }
+
+class InteractiveComponents {
+  public RootPaneContainer window;
+  public TeenyTyperEditorPane editor;
+  public JButton clearButton;
+  public Hashtable<Color, JToggleButton> colorButtons;
+  
+  public InteractiveComponents(RootPaneContainer window) {
+    this.colorButtons = new Hashtable<Color, JToggleButton>();
+    this.window = window;
+  }
+}
+
