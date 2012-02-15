@@ -11,6 +11,9 @@ package blacksmyth.teenytyper;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
 import java.awt.Font;
 import java.awt.Window;
 
@@ -39,6 +42,7 @@ import blacksmyth.general.swing.ActionBinder;
 import blacksmyth.general.swing.ColourIcon;
 
 public class TeenyTyperWindowFactory {
+
   private static final long serialVersionUID = 1L;
   
   private static Font EDITOR_FONT = new Font("Serif", Font.BOLD, 42);
@@ -62,6 +66,10 @@ public class TeenyTyperWindowFactory {
     createRootPaneContent(components);
     setWindowBounds(frame);
 
+    frame.setFocusTraversalPolicy(
+        new EditorFocusTraversalPolicy(components.editor)    
+      );
+
     return frame;
   }
 
@@ -72,6 +80,10 @@ public class TeenyTyperWindowFactory {
     
     createRootPaneContent(components);
     setWindowBounds(newWindow);
+    
+    newWindow.setFocusTraversalPolicy(
+      new EditorFocusTraversalPolicy(components.editor)    
+    );
 
     return newWindow;
   }
@@ -305,3 +317,36 @@ class InteractiveComponents {
   }
 }
 
+class EditorFocusTraversalPolicy extends FocusTraversalPolicy {
+  private TeenyTyperEditorPane editor;
+
+  public EditorFocusTraversalPolicy(TeenyTyperEditorPane editor) {
+    this.editor = editor;
+  }
+
+  @Override
+  public Component getComponentAfter(Container arg0, Component arg1) {
+    return editor;
+  }
+
+  @Override
+  public Component getComponentBefore(Container arg0, Component arg1) {
+    return editor;
+  }
+
+  @Override
+  public Component getDefaultComponent(Container arg0) {
+    return editor;
+  }
+
+  @Override
+  public Component getFirstComponent(Container arg0) {
+    return editor;
+  }
+
+  @Override
+  public Component getLastComponent(Container arg0) {
+    return editor;
+  }
+
+}
