@@ -16,7 +16,6 @@ import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.Window;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +38,12 @@ import javax.swing.border.MatteBorder;
 
 import blacksmyth.general.swing.ActionBinder;
 import blacksmyth.general.swing.ColourIcon;
+
+/**
+ * A factory class that produces a fully-formed, ready to run TeenyTyper JFrame.
+ * The creation of a new frame is thread-safe in that all instance state for 
+ * frame construction is placed on the stack.
+ */
 
 public class TeenyTyperWindowFactory {
 
@@ -276,6 +281,12 @@ public class TeenyTyperWindowFactory {
   
 }
 
+/**
+ * An actionListener that we can bind to colour buttons to trigger changes in the 
+ * foreground colour style currently set for the given TeenyTyperEditorPane.
+ * @author linds
+ *
+ */
 class ColourActionListener implements ActionListener {
   private Color colour;
   private TeenyTyperEditorPane editor;
@@ -291,6 +302,12 @@ class ColourActionListener implements ActionListener {
   }
 }
 
+/** 
+ * A simple container (modelled loosely off .NET structures) to keep references
+ * to all interactive components as the factory creates, and then wires together
+ * components via various event handlers.
+ *
+ */
 class InteractiveComponents {
   public JFrame window;
   public TeenyTyperEditorPane editor;
@@ -302,6 +319,11 @@ class InteractiveComponents {
     this.window = window;
   }
 }
+
+/**
+ * A restrictive editor focus traversal policy where all attempts
+ * at focus traversal bring the user back to the TeenyTyperEditorPane.
+ */
 
 class EditorFocusTraversalPolicy extends FocusTraversalPolicy {
   private TeenyTyperEditorPane editor;
