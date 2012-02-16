@@ -1,0 +1,67 @@
+<project name="TeenyTyper" default="full" basedir=".">
+
+  <!-- set global properties for this build -->
+  
+  <property name="rootName"       value="TeenyTyper"/>
+  <property name="rootDir"        value="blacksmyth/teenytyper"/>
+  <property name="rootClassPath"  value="blacksmyth.teenytyper"/>
+
+  <property name="rootSourceFile" value="${rootName}.java"/>
+  <property name="sourceDir"      value="${basedir}/src"/>
+  <property name="buildDir"       value="${basedir}/bin"/>
+  <property name="distDir"        value="${basedir}/dist"/>
+  <property name="sourceRelease"  value="1.6"/>
+
+  <target name="init" description="Initialisation of properties and directories.">
+    <!-- Create the time stamp -->
+    <tstamp/>
+
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${buildDir}"/>
+
+    <!-- Create the distribution directory -->
+    <mkdir dir="${distDir}"/>
+  </target>
+
+  <target name="compile" depends="init" description="compile TeenyTyper source.">
+    <!-- Compile the java code from ${srcDir} into ${buildDir} -->
+
+    <property name="sourceFile" value="${rootDir}/${rootSourceFile}"/>
+
+    <echo message="Compiling: ${sourceFile}" />
+
+    <javac fork="true"
+           source="${sourceRelease}" 
+           srcdir="${sourceDir}" 
+           destdir="${buildDir}">
+       <include name="${rootDir}/${rootSourceFile}"/>
+     </javac>
+  </target>
+ 
+  <target name="package" depends="compile" description="Packaging of compiled source into Jar file.">
+    <!-- Put everything in ${build} into the ${jarName}.jar file -->
+    <property name="finalJarFileBase" value="${distDir}/${rootName}"/>
+    <property name="finalJarFile"     value="${finalJarFileBase}.jar"/>
+    <property name="manifestFile"     value="${rootName}.mf" />
+
+    <echo message="Creating Manifest: ${manifestFile}" />
+    <echo message="Main-Class: ${rootClassPath}.${rootName}" file="${manifestFile}" />
+
+    <jar jarfile="${finalJarFile}" 
+         basedir="${buildDir}" 
+         manifest="${manifestFile}"
+         excludes="**/Test*.class" 
+      	 index="true" />
+
+    <delete file="${manifestFile}" />
+         
+  </target>
+  
+  <target name="clean" description="Resetting environment to source-only.">
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${buildDir}"/>
+    <delete file="${finalJarFile}"/>
+  </target>
+  
+  <target name="full" depends="clean,package" description="Complete reset and rebuild"/>
+</project>
