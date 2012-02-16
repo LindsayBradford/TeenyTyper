@@ -84,7 +84,9 @@ public class TeenyTyperWindowFactory {
   
   private static void createRootPaneContent(InteractiveComponents components) {
 
-    JPanel mainPanel = new JPanel(new BorderLayout(5,5));
+    JPanel mainPanel = new JPanel(new BorderLayout(5,5));    
+    mainPanel.setBackground(Color.DARK_GRAY);
+
 
     mainPanel.add(
         Box.createHorizontalStrut(5),
@@ -121,11 +123,13 @@ public class TeenyTyperWindowFactory {
   
   private static JPanel createMenuButtonPanel(InteractiveComponents components) {
     JPanel buttonPanel = new JPanel();
-    
+    buttonPanel.setBackground(Color.DARK_GRAY);
+
     final int HORIZONTAL_STRUT_WIDTH = 34;
     
     final JLabel editorLabel = new JLabel("TeenyTyper");
     editorLabel.setFont(EDITOR_FONT);
+    editorLabel.setForeground(Color.WHITE);
     
     buttonPanel.add(
         editorLabel
