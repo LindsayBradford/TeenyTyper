@@ -1,7 +1,11 @@
 # Compiled Java Code #
 ######################
-/bin/**
+bin/
+dist/
+.gradle/
 # IDE Detail #
 ##############
 .classpath
 .project
+#Swap files
+**.swp
