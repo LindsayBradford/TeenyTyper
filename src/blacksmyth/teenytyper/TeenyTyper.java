@@ -3,14 +3,13 @@
  * Creative Commons Attribution-ShareAlike 3.0 Unported License.
  *
  * Year: 2012 
- *
  */
 
 package blacksmyth.teenytyper;
 
 import javax.swing.UIManager;
 
-public class TeenyTyper extends TeenyTyperWindowFactory {
+public class TeenyTyper {
 
   private static final long serialVersionUID = 1L;
 

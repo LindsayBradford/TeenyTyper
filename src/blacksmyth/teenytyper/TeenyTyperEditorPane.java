@@ -21,7 +21,6 @@ import javax.swing.text.StyleConstants;
  *  An extension to JTextPane that allows for the creation of an editor pane
  *  of a given font, capable of switching between the supplied colour list, and
  *  defaulting to the given defaultColour. 
- *
  */
 public class TeenyTyperEditorPane extends JTextPane {
 

@@ -288,8 +288,6 @@ public class TeenyTyperWindowFactory {
 /**
  * An actionListener that we can bind to colour buttons to trigger changes in the 
  * foreground colour style currently set for the given TeenyTyperEditorPane.
- * @author linds
- *
  */
 class ColourActionListener implements ActionListener {
   private Color colour;
