@@ -11,6 +11,7 @@ package blacksmyth.general.swing;
 import java.util.UUID;
 
 import javax.swing.AbstractAction;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
@@ -55,7 +56,16 @@ public final class ActionBinder {
                                            KeyStroke keyStroke, 
                                            AbstractAction actionToPerform) {
     
-    component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeLabel);
-    component.getActionMap().put(keyStrokeLabel, actionToPerform);
+    InputMap inputMap = component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    inputMap.put(
+        keyStroke, 
+        keyStrokeLabel
+    );
+
+    component.getActionMap().put(
+        keyStrokeLabel, 
+        actionToPerform
+    );
   }
 }

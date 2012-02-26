@@ -12,8 +12,15 @@ import java.awt.Color;
 
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
@@ -25,11 +32,14 @@ import javax.swing.text.StyleConstants;
 public class TeenyTyperEditorPane extends JTextPane {
 
   private static final long serialVersionUID = 1L;
+  private static final int marginPx = 5;
   
   public TeenyTyperEditorPane(Font editorFont, Color[] colourList, Color defaultColour) {
     super();
     
     this.setFont(editorFont);
+    this.setMargin(new Insets(marginPx, marginPx, marginPx, marginPx));
+
     
     this.setCursor(
         Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
@@ -56,4 +66,29 @@ public class TeenyTyperEditorPane extends JTextPane {
         this.getStyle(colorText), false
     );
   }
+  
+  
+  /**
+   * Returns an image of the text currently in this editor pane.
+   * @return
+   */
+  public Image getTextAsImage() {
+    BufferedImage editorImage = new BufferedImage(
+        this.getPreferredSize().width,
+        this.getPreferredSize().height,
+        BufferedImage.TYPE_INT_RGB
+    );
+    
+    Graphics2D g = editorImage.createGraphics();
+    
+    this.getCaret().setVisible(false);
+    this.paint(g);
+    this.getCaret().setVisible(true);
+
+    g.dispose();
+    
+    return editorImage;
+  }
+  
+  
 }
