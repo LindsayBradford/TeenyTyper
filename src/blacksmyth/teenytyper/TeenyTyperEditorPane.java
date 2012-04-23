@@ -12,15 +12,12 @@ import java.awt.Color;
 
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
@@ -32,14 +29,11 @@ import javax.swing.text.StyleConstants;
 public class TeenyTyperEditorPane extends JTextPane {
 
   private static final long serialVersionUID = 1L;
-  private static final int marginPx = 5;
   
   public TeenyTyperEditorPane(Font editorFont, Color[] colourList, Color defaultColour) {
     super();
-    
-    this.setFont(editorFont);
-    this.setMargin(new Insets(marginPx, marginPx, marginPx, marginPx));
 
+    this.setFont(editorFont);
     
     this.setCursor(
         Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)

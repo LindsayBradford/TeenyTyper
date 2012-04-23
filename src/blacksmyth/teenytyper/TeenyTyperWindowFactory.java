@@ -41,6 +41,7 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.border.MatteBorder;
 
+import blacksmyth.general.ImageLogger;
 import blacksmyth.general.swing.ActionBinder;
 import blacksmyth.general.swing.ColourIcon;
 
@@ -263,6 +264,9 @@ public class TeenyTyperWindowFactory {
           private static final long serialVersionUID = 1L;
 
           public void actionPerformed(ActionEvent arg0) {
+            ImageLogger.log(
+                (BufferedImage) components.editor.getTextAsImage()
+            );
             System.exit(0);
           }
         }
@@ -276,17 +280,9 @@ public class TeenyTyperWindowFactory {
           }
           
           private void saveTextImage() {
-            String fileExt = "png";
-            File file = new File("textPic." + fileExt);  
-            try {
-              javax.imageio.ImageIO.write(
-                  (BufferedImage) components.editor.getTextAsImage(), 
-                  fileExt, 
-                  file
-              );  
-            } catch(IOException e) {  
-                System.out.println("write error: " + e.getMessage());  
-            }  
+            ImageLogger.log(
+                (BufferedImage) components.editor.getTextAsImage()
+            );
           }
           
           private void clearText() {

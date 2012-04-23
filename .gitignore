@@ -1,6 +1,7 @@
 # Compiled Java Code #
 ######################
 bin/
+build/
 dist/
 .gradle/
 # IDE Detail #
